@@ -1,16 +1,22 @@
 module.exports = {
-    baseUrl: './',
-    assetsDir: 'static',
-    productionSourceMap: false,
-    // devServer: {
-    //     proxy: {
-    //         '/api':{
-    //             target:'http://jsonplaceholder.typicode.com',
-    //             changeOrigin:true,
-    //             pathRewrite:{
-    //                 '/api':''
-    //             }
-    //         }
-    //     }
-    // }
+  baseUrl: './',
+  assetsDir: 'static',
+  productionSourceMap: false,
+  devServer: {
+    open: false, //是否自动弹出浏览器页面
+    host: "localhost", 
+    port: '5000',
+    https: false,
+    hotOnly: false, 
+    proxy: {
+      '/api': {
+        target: 'https://www.yuque.com/api',
+        ws: true,  //代理websockets
+        changeOrigin: true, // 虚拟的站点需要更管origin
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
+    },
+  },
 }
