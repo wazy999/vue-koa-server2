@@ -23,9 +23,9 @@
 					<div slot="header" class="clearfix">
 						<span>语言详情</span>
 					</div>
-          Vue <el-progress :percentage="82.6" color="#42b983"></el-progress>
-          JavaScript <el-progress :percentage="13.4" color="#f1e05a"></el-progress>
-          CSS <el-progress :percentage="3.3"></el-progress>
+          Vue <el-progress :percentage="81.7" color="#42b983"></el-progress>
+          JavaScript <el-progress :percentage="14.4" color="#f1e05a"></el-progress>
+          CSS <el-progress :percentage="3.2"></el-progress>
           Other <el-progress :percentage="0.7" color="#f56c6c"></el-progress>
 				</el-card>
 			</el-col>
