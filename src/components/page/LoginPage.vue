@@ -110,6 +110,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            window.localStorage.setItem('ms_username', this.ruleForm.name)
             // 访问后台、数据库
             axios.userLogin(this.ruleForm)
               .then( ({data}) => {
@@ -167,7 +168,7 @@
     padding: 0;
   }
   .content {
-    background-image: url("../../assets/bgpic.png");
+    background-image: url("../../assets/img/bgpic.png");
     width: 100vw;
     height: 100vh;
     position: relative;
@@ -181,7 +182,7 @@
       display: flex;
       justify-content: space-between;
       .tree{
-        background-image: url("../../assets/tree.png");
+        background-image: url("../../assets/img/tree.png");
         width: 143px;
         height: 81px;
       }
@@ -204,7 +205,7 @@
       background-color: #fff;
       border-radius: 13px;
       .left{
-        background-image: url("../../assets/dsbg.png");
+        background-image: url("../../assets/img/dsbg.png");
         width: 330px;
         height: 330px;
         float: left;

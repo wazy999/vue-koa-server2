@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-row :gutter="20">
-			<el-col :span="8">
+			<el-col class="left-sider" :span="8">
 				<el-card shadow="hover" class="mgb20" style="height:252px;">
 					<div class="user-info">
 						<img src="../../assets/img/img.jpg" class="user-avator" alt />
@@ -12,7 +12,7 @@
 					</div>
 					<div class="user-info-list">
 						上次登录时间：
-						<span>2020-09-20</span>
+						<span>{{ last_login | formatDate }}</span>
 					</div>
 					<div class="user-info-list">
 						上次登录地点：
@@ -22,11 +22,11 @@
 				<el-card shadow="hover">
 					<div slot="header" class="clearfix">
 						<span>语言详情</span>
-					</div>Vue
-					<el-progress :percentage="52.1" color="#42b983"></el-progress>JavaScript
-					<el-progress :percentage="24.1" color="#f1e05a"></el-progress>CSS
-					<el-progress :percentage="13.7"></el-progress>HTML
-					<el-progress :percentage="10.1" color="#f56c6c"></el-progress>
+					</div>
+          Vue <el-progress :percentage="82.6" color="#42b983"></el-progress>
+          JavaScript <el-progress :percentage="13.4" color="#f1e05a"></el-progress>
+          CSS <el-progress :percentage="3.3"></el-progress>
+          Other <el-progress :percentage="0.7" color="#f56c6c"></el-progress>
 				</el-card>
 			</el-col>
 			<el-col :span="16">
@@ -111,6 +111,8 @@
 <script>
   import configObj from '@/config.js'
   import axios from '@/axios.js'
+  import dayjs from 'dayjs'
+
   export default {
   	name: 'dashboard',
   	data() {
@@ -125,10 +127,14 @@
   			checkedLabels: [],  //某个分页已选择的复选框
   			selectedLabels: [],  //所有分页已选择的复选框
   			name: localStorage.getItem('ms_username'),
+        last_login: window.localStorage.getItem('last_login')*1 || (new Date()).getTime()
   		};
   	},
-  	components: {
-  	},
+    filters: {
+      formatDate: function (value) {
+        return dayjs(value).format('YYYY-MM-DD')
+      }
+    },
   	computed: {
   		role() {
   			return this.name === 'admin' ? '超级管理员' : '普通用户';
@@ -345,7 +351,7 @@
     bottom: 0;
   }
   .el-row {
-  	margin-bottom: 20px;
+  	/*margin-bottom: 20px;*/
   }
 
   .grid-content {

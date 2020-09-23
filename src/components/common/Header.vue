@@ -71,6 +71,9 @@ export default {
         handleCommand(command) {
             if (command == 'loginout') {
                 localStorage.removeItem('ms_username');
+                sessionStorage.removeItem('token');
+                // 存入登录的时间戳
+                window.localStorage.setItem('last_login', (new Date()).getTime())
                 this.$router.push('/login');
             }
         },

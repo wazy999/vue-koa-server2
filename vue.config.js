@@ -1,11 +1,10 @@
 module.exports = {
-  baseUrl: './',
-  assetsDir: 'static',
+  publicPath:'./',
   productionSourceMap: false,
   devServer: {
     open: false, //是否自动弹出浏览器页面
     host: "localhost", 
-    port: '5000',
+    port: '5001',
     https: false,
     hotOnly: false, 
     proxy: {
