@@ -1,5 +1,24 @@
 # vue-manage-system
 
+## Project setup
+```
+yarn
+```
+
+### Compiles and hot-reloads for development
+```
+yarn dev
+```
+
+## 功能
+1、管理员登录
+
+2、读取语雀文章并写入MongoDB数据库实现持久化
+
+3、语雀文章预览
+
+
+
 <a href="https://github.com/vuejs/vue">
     <img src="https://img.shields.io/badge/vue-2.6.10-brightgreen.svg" alt="vue">
   </a>
