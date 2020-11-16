@@ -2,6 +2,7 @@
   "name": "vue-manage-system",
   "version": "4.2.0",
   "private": true,
+  "homepage": "https://gittig11.github.io/vue-koa-server2",
   "scripts": {
     "dev": "npm run serve",
     "serve": "vue-cli-service serve",
