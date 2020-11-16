@@ -204,6 +204,27 @@
               let resData = response.data.data
               blog.body_markdown = resData.body
               blog.body_html = resData.body_html
+              blog.book_id = resData.book_id
+              blog.comments_count = resData.comments_count
+              blog.content_updated_at = resData.content_updated_at
+              blog.cover = resData.cover
+              blog.creator = resData.creator
+              blog.created_at = resData.created_at
+              blog.custom_description = resData.custom_description
+              blog.description = resData.description
+              blog.first_published_at = resData.first_published_at
+              blog.format = resData.format
+              blog.hits = resData.hits
+              blog.likes_count = resData.likes_count
+              blog.public = resData.public
+              blog.published_at = resData.published_at
+              blog.read_status = resData.read_status
+              blog.slug = resData.slug
+              blog.status = resData.status
+              blog.updated_at = resData.updated_at
+              blog.user_id = resData.user_id
+              blog.view_status = resData.view_status
+              blog.word_count = resData.word_count
               this.blogs.push(blog)
             })
           }
@@ -270,7 +291,7 @@
           axios.postAnArticle(checkBlogs[i])
           // this.axios.post('http://localhost:3000/articles', checkBlogs[i])
             .then(()=>{
-              // console.log(response);
+              console.log("success");
               this.$message({
                 showClose: true,
                 message: `文章 ${checkBlogs[i].title} 持久化完成~`,
@@ -279,6 +300,7 @@
               })
             })
             .catch((err)=>{
+              console.log(err);
               if(err.status === 409){
                 this.$message({
                   showClose: true,
