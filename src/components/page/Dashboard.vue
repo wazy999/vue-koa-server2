@@ -286,7 +286,7 @@
       handleCheckAllChange(val){
         //@change="handleCheckAllChange"-->选中状态val为true，未选中为false
         // console.log(val)
-        this.checkedLabels = val ? this.labels.slice((this.currentPage-1)*10, this.currentPage*10) : [];
+        this.checkedLabels = val ? this.list.slice((this.currentPage-1)*10, this.currentPage*10) : [];
         this.isIndeterminate = false;
       },
       handleCheckedLabelsChange(value){
