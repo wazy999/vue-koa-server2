@@ -78,10 +78,12 @@
             </div>
           </div>
 
+          <!-- 勾选时触发 -->
           <el-checkbox-group v-model="checkedLabels" @change="handleCheckedLabelsChange">
             <li v-for="item in displayList" :key="item.id">
-              <el-checkbox :label="item.id">
-                <router-link target="_blank" :to="'/articles/'+item.id">
+              <!-- <el-checkbox :label="item"> -- handleCheckedLabelsChange()传参item -->
+              <el-checkbox :label="item">
+                <router-link target="_blank" :to="`/articles/${item.id}?userId=${item.user_id}`">
                   {{item.title}}
                 </router-link>
               </el-checkbox>
@@ -173,65 +175,24 @@
           type: 'success',
           duration: 1000
         })
-        // 获取id、title等数据
-        this.axios.get(`${configObj.docsUrl}`,{
-          headers: {
-            'X-Auth-Token': configObj.yuqueToken
-          }
-        }).then((response)=>{
-          // console.log("response.data.data");
-          // console.log(response.data.data);
-          this.list = response.data.data
+        let urlArr = configObj.authorsAndBooks.map((item) => `api/v2/repos/${item.author}/${item.book}/docs`);
+        let reqList = [];
+        console.log(urlArr);
+        for(let i=0; i<urlArr.length; i++){
+          let req = this.axios.get(urlArr[i], {
+            headers: {
+              'X-Auth-Token': configObj.yuqueToken
+            }
+          })
+          reqList.push(req);
+        }
+        this.axios.all(reqList).then(this.axios.spread((...resList) => {
+          this.list = resList.map((item) => item.data.data).flat(); // 所有的文章
+          // console.log(resList) // 拿到所有posts数据
+          console.log(this.list)
           this.displayList = this.list.slice((this.currentPage-1)*10, this.currentPage*10)
           this.labels = this.list.map((item) => item.id)
-          // console.log(this.labels)
-        })
-        .then(()=>{
-          // 统一文档格式
-          for(let i=0; i<this.list.length; i++){
-            let blog = {}
-            blog.id = this.list[i].id
-            blog.title = this.list[i].title
-            this.axios.get(`${configObj.docsUrl}${blog.id}`,{
-              headers: {
-                'X-Auth-Token': configObj.yuqueToken
-              },
-              params: {
-                raw: 1,  // Markdown格式
-              }
-            })
-            .then((response)=>{
-              let resData = response.data.data
-              blog.body_markdown = resData.body
-              blog.body_html = resData.body_html
-              blog.book_id = resData.book_id
-              blog.comments_count = resData.comments_count
-              blog.content_updated_at = resData.content_updated_at
-              blog.cover = resData.cover
-              blog.creator = resData.creator
-              blog.created_at = resData.created_at
-              blog.custom_description = resData.custom_description
-              blog.description = resData.description
-              blog.first_published_at = resData.first_published_at
-              blog.format = resData.format
-              blog.hits = resData.hits
-              blog.likes_count = resData.likes_count
-              blog.public = resData.public
-              blog.published_at = resData.published_at
-              blog.read_status = resData.read_status
-              blog.slug = resData.slug
-              blog.status = resData.status
-              blog.updated_at = resData.updated_at
-              blog.user_id = resData.user_id
-              blog.view_status = resData.view_status
-              blog.word_count = resData.word_count
-              this.blogs.push(blog)
-            })
-          }
-        })
-        .catch((response)=>{
-          console.log(response);
-        })
+        }))
       },
   		doNotPersistence(){
         if(this.checkedLabels.length === 0){
@@ -242,32 +203,32 @@
           })
           return false;
         }
-        console.log("doNotPersistence");
-        let checkBlogs = this.blogs.filter(blog => this.checkedLabels.includes(blog.id))
-        console.log(checkBlogs);
-        for(let i=0; i<this.checkedLabels.length; i++){
-          axios.removeAnArticle(this.checkedLabels[i])
-            .then(()=>{
-              // console.log(response);
-              this.$message({
-                showClose: true,
-                message: `文章 ${checkBlogs[i].title} 取消持久化完成~`,
-                type: 'success',
-                duration: 1500
-              })
-            })
-            .catch((err)=>{
-              // console.log(err)
-              if(err.status === 404){
+        else {
+          console.log("doNotPersistence");
+          for(let i=0; i<this.checkedLabels.length; i++){
+            axios.removeAnArticle(this.checkedLabels[i].id)
+              .then(()=>{
+                // console.log(response);
                 this.$message({
                   showClose: true,
-                  message: `文章 ${checkBlogs[i].title} 已经取消持久化~`,
-                  type: 'warning',
+                  message: `文章 ${this.checkedLabels[i].title} 取消持久化完成~`,
+                  type: 'success',
                   duration: 1500
                 })
-              }
-            })
-        }  // endfor
+              })
+              .catch((err)=>{
+                // console.log(err)
+                if(err.status === 404){
+                  this.$message({
+                    showClose: true,
+                    message: `文章 ${this.checkedLabels[i].title} 已经取消持久化~`,
+                    type: 'warning',
+                    duration: 1500
+                  })
+                }
+              })
+          }  // endfor
+        }
       },
       doPersistence(){
         // 持久化之前需要选择某些文章
@@ -279,52 +240,58 @@
           })
           return false;
         }
-        console.log("doPersistence");
-        // console.log(this.blogs);
-
-        // 复选框选中的文章
-        let checkBlogs = this.blogs.filter(blog => this.checkedLabels.includes(blog.id))
-        console.log(checkBlogs);
-        // 
-        // 文章存入数据库后，前端读取数据库并展示
-        for(let i=0; i<checkBlogs.length; i++){
-          axios.postAnArticle(checkBlogs[i])
-          // this.axios.post('http://localhost:3000/articles', checkBlogs[i])
-            .then(()=>{
-              console.log("success");
-              this.$message({
-                showClose: true,
-                message: `文章 ${checkBlogs[i].title} 持久化完成~`,
-                type: 'success',
-                duration: 1000
-              })
+        else {
+          console.log("doPersistence");
+          console.log(this.checkedLabels);
+          for(let i=0; i<this.checkedLabels.length; i++){
+            let person = configObj.authorsAndBooks.filter(obj => obj.user_id === this.checkedLabels[i].user_id).shift();
+            let link = `api/v2/repos/${person.author}/${person.book}/docs/${this.checkedLabels[i].id}?raw=1`
+            console.log(link);
+            // 根据文章id请求文章内容
+            this.axios.get(link, {
+              headers: {
+                'X-Auth-Token': configObj.yuqueToken
+              },
+              // params: {
+              //   raw: 1,  // Markdown格式
+              // }
             })
-            .catch((err)=>{
-              console.log(err);
-              if(err.status === 409){
-                this.$message({
-                  showClose: true,
-                  message: `文章 ${checkBlogs[i].title} 已经持久化~`,
-                  type: 'warning',
-                  duration: 1000
+            .then(({data})=>{
+              // 存入数据库
+              axios.postAnArticle(data.data)
+                .then(()=>{
+                  console.log("success");
+                  this.$message({
+                    showClose: true,
+                    message: `文章 ${data.data.title} 持久化完成~`,
+                    type: 'success',
+                    duration: 1000
+                  })
                 })
-              }
+                .catch((err)=>{
+                  console.log(err);
+                  if(err.status === 409){
+                    this.$message({
+                      showClose: true,
+                      message: `文章 ${data.data.title} 已经持久化~`,
+                      type: 'warning',
+                      duration: 1000
+                    })
+                  }
+                })
             })
-        }  // endfor
-        // console.log(this.checkedLabels)
+          }
+        }
       },
       handleCheckAllChange(val){
         //@change="handleCheckAllChange"-->选中状态val为true，未选中为false
         // console.log(val)
         this.checkedLabels = val ? this.labels.slice((this.currentPage-1)*10, this.currentPage*10) : [];
-        // 这样太复杂了...
-        // this.selectedLabels = this.selectedLabels.concat(this.checkedLabels);
-        // console.log("this.selectedLabels")
-        // console.log(this.selectedLabels)
         this.isIndeterminate = false;
       },
       handleCheckedLabelsChange(value){
-        // console.log(value);  //已勾选的复选框的label组成的数组
+        console.log(value);  //已勾选的复选框的label组成的数组
+        // 比较数量
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.labels.length;
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.labels.length;

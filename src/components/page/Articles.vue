@@ -16,19 +16,18 @@ export default {
       title: '',
       updated_at: '',
       body_html: '',
-      id: this.$route.params.id
     }
   },
   mounted() {
-    this.axios.get(`${configObj.docsUrl}${this.id}`,{
+    let userId = parseInt(this.$route.query.userId);
+    let person = configObj.authorsAndBooks.filter(obj => obj.user_id === userId).shift();
+    let link = `api/v2/repos/${person.author}/${person.book}/docs/${this.$route.params.id}?raw=1`
+    console.log(this.$route.params);
+    this.axios.get(link, {
       headers: {
         'X-Auth-Token': configObj.yuqueToken
       },
-      params: {
-        raw: 1,  // Markdown格式
-      }
     }).then((response)=>{
-      console.log(response.data.data);
       let {title, updated_at, body_html} = response.data.data
       this.title = title
       this.updated_at = updated_at.slice(0, 10)
