@@ -36,8 +36,8 @@
               <div class="grid-content grid-con-1">
                 <i class="el-icon-lx-people grid-con-icon"></i>
                 <div class="grid-cont-right">
-                  <div class="grid-num">1234</div>
-                  <div>用户访问量</div>
+                  <div class="grid-num">{{flow.UV}}</div>
+                  <div>用户访问量(UV)</div>
                 </div>
               </div>
             </el-card>
@@ -47,19 +47,8 @@
               <div class="grid-content grid-con-2">
                 <i class="el-icon-lx-notice grid-con-icon"></i>
                 <div class="grid-cont-right">
-                  <div class="grid-num">321</div>
-                  <div>系统消息</div>
-                </div>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="8">
-            <el-card shadow="hover" :body-style="{padding: '0px'}">
-              <div class="grid-content grid-con-3">
-                <i class="el-icon-lx-goods grid-con-icon"></i>
-                <div class="grid-cont-right">
-                  <div class="grid-num">5000</div>
-                  <div>数量</div>
+                  <div class="grid-num">{{flow.PV}}</div>
+                  <div>网站浏览量(PV)</div>
                 </div>
               </div>
             </el-card>
@@ -129,7 +118,8 @@
         checkedLabels: [],  //某个分页已选择的复选框
         selectedLabels: [],  //所有分页已选择的复选框
         name: localStorage.getItem('ms_username'),
-        last_login: window.localStorage.getItem('last_login')*1 || (new Date()).getTime()
+        last_login: window.localStorage.getItem('last_login')*1 || (new Date()).getTime(),
+        flow:{}
       };
     },
     filters: {
@@ -295,7 +285,14 @@
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.labels.length;
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.labels.length;
-      }
+      },
+    },
+    mounted(){
+      // 获取浏览量
+      axios.getFlow().then(res => {
+        console.log(res.data.data[0])
+        this.flow = res.data.data[0]
+      })
     }
   };
 </script>

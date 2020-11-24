@@ -78,5 +78,9 @@ export default {
   //删除用户
   delUser(data) {
     return instance.post('/users/delUser', data);
-  }
+  },
+  // 获取流量
+   getFlow(data){
+    return instance.get('http://localhost:5000/flow/findFlow');
+   }
 }
